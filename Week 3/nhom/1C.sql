@@ -1,0 +1,52 @@
+﻿IF DB_ID('QLDEAN') IS NOT NULL --KIỂM TRA CSDL TÊN "QLDEAN" CÓ TỒN TẠI KO? NOT NULL --> ĐÃ CÓ CSDL NÀY
+	DROP DATABASE QLDEAN --XÓA CSDL QLDEAN
+GO --CÂU LỆNH TRÊN CHẠY XONG 
+CREATE DATABASE QLDEAN --TÊN CSDL KHÔNG BẮT ĐẦU BẰNG SỐ, KÍ TỰ ĐẶC BIỆT, KO CHỨA KHOẢN TRẮNG
+GO
+USE QLDEAN --CHUYỂN CSDL MẶC ĐỊNH THÀNH QLDEAN
+GO
+CREATE TABLE DEAN(
+	MADA CHAR(10),
+	NGAYBD DATETIME,
+	NGAYKT DATETIME,
+	TTRANG NVARCHAR(20),
+	MAPB CHAR(10),
+	CHIPHIDDA FLOAT
+	constraint PK_DEAN primary key(MADA)
+)
+CREATE TABLE CONGDOAN(
+	MADA CHAR(10),
+	STTCD INT,
+	NGAYBD DATETIME,
+	NGAYKT DATETIME,
+	MACV CHAR(10)
+	constraint PK_CONGDOAN primary key (STTCD)
+	constraint FK_congdoan_dean foreign key (MADA) references DEAN(MADA)
+)
+CREATE TABLE THAMGIACD(
+	MANV CHAR(10),
+	MADA CHAR(10),
+	STTCD INT
+	constraint PK_THAMGIACD primary key (MANV,STTCD)
+	constraint FK_thamgiacd_congdoan foreign key (STTCD) references CONGDOAN(STTCD)
+)
+
+CREATE TABLE CONGVIEC(
+	MACV CHAR(10),
+	TENCV NVARCHAR(50),
+	CHIPHICV FLOAT
+	constraint PK_CONGVIEC primary key (MACV)	
+)
+CREATE TABLE KHANANG(
+	MANV CHAR(10),
+	MACV CHAR(10)
+	constraint PK_KHANANG primary key(MANV)
+	constraint FK_khanang_congviec foreign key (MACV) references CONGVIEC(MACV)
+)
+
+
+ALTER TABLE CONGDOAN
+ADD constraint FK_congdoan_congviec foreign key (MACV) references CONGVIEC(MACV)
+ALTER TABLE THAMGIACD
+ADD constraint FK_thamgiacd_khanang foreign key (MANV) references KHANANG(MANV)
+
